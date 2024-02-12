@@ -12,9 +12,12 @@ provider "keep" {
 
 }
 
-data "keep_workflows" "test" {}
-
-output "test_workflows" {
-  value = data.keep_workflows.test
+resource "keep_workflows" "test" {
+  workflows = [
+  {yaml = "actions:\n- name: discord-action\n  provider:\n    config: '{{ providers.discorj }}'\n    type: discord\n    with:\n      content: noam\ndescription: n0am\nid: 581078b1-4f39-41f4-b58c-fdbb6f59e0b5\nowners: []\nservices: []\nsteps: []\ntriggers:\n- filters:\n  - key: source\n    value: r\".*\"\n  type: alert\n"}
+  ]
 }
 
+output "test_workflows" {
+  value = keep_workflows.test
+}

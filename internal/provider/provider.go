@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -66,6 +67,9 @@ type keepProviderModel struct {
 
 // Configure prepares a keep API client for data sources and resources.
 func (p *keepProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+
+	tflog.Info(ctx, "Configuring Keep client")
+
 	// Retrieve provider data from configuration
 	var config keepProviderModel
 	fmt.Print("configing")
@@ -152,10 +156,16 @@ func (p *keepProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 			return
 	}
 
-	// Make the HashiCups client available during DataSource and Resource
+	ctx = tflog.SetField(ctx, "keep_host", host_url)
+	ctx = tflog.SetField(ctx, "keep_api_key", api_key)
+
+	tflog.Debug(ctx, "Creating Keep client")
+	// Make the Keep client available during DataSource and Resource
 	// type Configure methods.
 	resp.DataSourceData = client
 	resp.ResourceData = client
+
+	tflog.Info(ctx, "Configured Keep client", map[string]any{"success": true})
 }
 }
 
@@ -168,5 +178,7 @@ func (p *keepProvider) DataSources(_ context.Context) []func() datasource.DataSo
 
 // Resources defines the resources implemented in the provider.
 func (p *keepProvider) Resources(_ context.Context) []func() resource.Resource {
-    return nil
+    return []func() resource.Resource{
+			NewWorkflowsResource,
+		}
 }

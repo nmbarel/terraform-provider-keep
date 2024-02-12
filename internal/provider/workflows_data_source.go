@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-    "github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -16,7 +15,7 @@ var (
     _ datasource.DataSourceWithConfigure = &workflowsDataSource{}
   )
   
-  // NewworkflowsDataSource is a helper function to simplify the provider implementation.
+  // NewWorkflowsDataSource is a helper function to simplify the provider implementation.
   func NewWorkflowsDataSource() datasource.DataSource {
     return &workflowsDataSource{}
   }
@@ -26,14 +25,14 @@ var (
     client *client.Client
   }
 
-  // coffeesDataSourceModel maps the data source schema data.
-type workflowsDataSourceModel struct {
+  // workflowsDataSourceModel maps the data source schema data.
+  type workflowsDataSourceModel struct {
     Workflows []workflowsModel `tfsdk:"workflows"`
   }
   
-  // coffeesModel maps coffees schema data.
+  // workflowsModel maps coffees schema data.
   type workflowsModel struct {
-    Yaml          types.String               `tfsdk:"yaml"`
+    Yaml          string               `tfsdk:"yaml"`
   }
   
   // Metadata returns the data source type name.
@@ -74,7 +73,7 @@ type workflowsDataSourceModel struct {
 
     for _, workflow := range workflows {
         workflowState := workflowsModel{
-            Yaml: types.StringValue(workflow.Yaml),
+            Yaml: workflow.Yaml,
         }
         state.Workflows = append(state.Workflows, workflowState)
 
